@@ -1,0 +1,17 @@
+{
+  "name": "SDG Passport Challenge",
+  "short_name": "SDG Passport",
+  "description": "Collect stamps for Sustainable Development Goals actions at Seneca",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#3F7E44",
+  "icons": [
+    {
+      "src": "/vite.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ]
+}
+
