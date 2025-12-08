@@ -1,0 +1,23 @@
+# SDG Passport Project Rules 🌍
+
+## Rule 1: The "Impact First" Code Style
+*   **Variable Naming**: Use clear, descriptive names. (e.g., `calculateImpactScore` not `calcScore`).
+*   **Why**: Our code is our "Transparent Engine." It must be readable by future students.
+
+## Rule 2: Efficiency (Solarpunk Standard) ⚡
+*   **Performance**: Optimize for low-bandwidth devices. Many students use older phones.
+*   **Images**: Always use optimized WebP/SVG formats.
+
+## Rule 3: Component Reuse (The "Lego" System) 🧱
+*   **Reuse**: If you build a "Badge Card," make it a reusable component.
+*   **Refactor**: Don't copy-paste UI. Build a library.
+
+## Rule 4: Windows Environment 🪟
+*   **Commands**: Expect Windows/PowerShell (Use `Ctrl` not `Cmd`).
+
+## Rule 5: Documentation is Currency 📝
+*   **README**: Every new feature needs a line in the README.
+*   **Comments**: Explain *Why* not just *What*. (e.g., "// Using LocalStorage for MVP to avoid server costs").
+
+## Rule 6: No "Dead Code" (Leave it Cleaner) 🧹
+*   **Cleanup**: Delete unused files immediately. We don't hoard trash.
