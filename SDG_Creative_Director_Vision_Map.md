@@ -78,7 +78,7 @@ To move from a **Prototype** to a **Live Operation**, we need to cover the costs
 ---
 
 ## 🚀 Next Steps: The First 30 Days
-1.  **Listen & Align**: 1:1 meetings with Directors to customize the app to your specific 2024 goals.
+1.  **Listen & Align**: 1:1 meetings with Directors to customize the app to your specific goals.
 2.  **Audit**: Reviewing current branding and past engagement data.
 3.  **Prototype Demo**: Unveiling the Phase 1 App Experience for team feedback.
 
