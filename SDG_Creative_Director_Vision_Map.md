@@ -83,5 +83,5 @@ To move from a **Prototype** to a **Live Operation**, we need to cover the costs
 3.  **Prototype Demo**: Unveiling the Phase 1 App Experience for team feedback.
 
 ---
-*Tip: This document is written to be AI-friendly. Feel free to copy sections into your preferred AI tool to generate specific summaries or email drafts tailored to your department.*
+*Tip: This document is AI-friendly. You can *ask your AI* to clarify or summarize any section for your specific department.*
 
