@@ -1,11 +1,11 @@
-# 🌍 SDG Passport: The Game of Global Good
+# 🌍 SDG Passport: The Living Lab Platform
 > *Powered by Hybrid Intelligence (Human + AI + RI)*
 
-**"Gamifying the future of social impact."**
+**"Converting Student Engagement into Operational Efficiency."**
 
-This is the Core MVP for the **SDG Passport Challenge**—a platform designed to turn "volunteering" into "leveling up." By combining mobile technology, gamification, and the 17 Sustainable Development Goals, we are building a tool that empowers students to track their impact in real-time.
+This is the Core MVP for the **SDG Passport**—a "Living Lab" platform designed to transform the student body into a distributed **Data Collection Workforce**. By gamifying campus audits (waste, energy, accessibility), we solve critical operational data gaps (such as AASHE STARS EN-13) while providing students with verified impact micro-credentials.
 
-**Status**: 🟢 Active Prototype | **Vision**: Open Innovation for the UN Club
+**Status**: 🟢 Active Prototype | **Vision**: Smart Campus Operations Tool
 
 
 

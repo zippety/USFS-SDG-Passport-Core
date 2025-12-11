@@ -1,0 +1,55 @@
+# SDG Passport: Phase 1 Complete (The "Trojan Horse")
+
+**Status:** ✅ BUILT & DEPLOYED (Localhost MVP)
+**Strategy:** Use the high-fidelity app to secure **Phase 2 Funding (Backend)**.
+**Date:** December 2025
+
+---
+
+## 1. THE STRATEGIC PIVOT
+We have moved beyond "Ideas". We now have a **tangible product**.
+We are no longer asking for *permission to build*. We are asking for *resources to scale*.
+
+### **The "Trojan Horse" Strategy**
+The App looks and feels like a fully funded Tech Startup product, but it is currently running on "Sweat Equity" (Frontend Only).
+*   **The Shell:** A beautiful, dark-mode enabled mobile app.
+*   **The Inside:** Mock data (Phase 1) ready to be replaced by Real Data (Phase 2).
+*   **The Goal:** Show this to Seneca Leadership/SenecaAI to say: *"The car is built. We just need gas (Server Funding)."*
+
+---
+
+## 2. CURRENT ARSENAL (What is Built)
+
+### **A. Core Gamification (The Hook)**
+*   **SDG Passport:** Digital stamp collection for all 17 Goals.
+*   **Sustainability Pet ("Eco-Companion"):** An interactive mascot that lives on the home screen. It reacts to user attention. *Strategy: Use this for "Tamagotchi-style" marketing to students.*
+*   **Leaderboard:** Visual ranking by Student and by Program.
+
+### **B. Community & Utility (The Sticky features)**
+*   **Events Calendar:** A centralized place to see and "Book" USFS workshops. No more Eventbrite.
+*   **Community Hub:** A Slack-like chat interface with Channels (`#general`, `#climate-action`). *Strategy: Replace WhatsApp groups with an integrated, branded platform.*
+
+### **C. Internal Alignment (The Command Center)**
+*   **Team Dashboard (`/team`):** A hidden "Staff Access" portal.
+*   **Features:** Strategy Vault links, Role Clarity Cards, and a Live Kanban Roadmap.
+*   **Purpose:** Keeps the Exec team aligned without needing 10 different Notion pages.
+
+---
+
+## 3. PHASE 2: THE ASK (SenecaAI Partnership)
+We are not asking for $700 for pizza. We are asking for **Infrastructure**.
+
+### **The Pitch to SenecaAI:**
+*"We have built the frontend interface for the ideal 'Living Lab' student engagement platform. It has Chat, Events, and Gamification built-in."*
+
+**We need:**
+1.  **Firebase/Cloud Database:** To make the Chat and Pet state real-time.
+2.  **App Store Fees:** To get this on every student's phone.
+3.  **The Deal:** USFS becomes the "User Acquisition Engine" for the SenecaAI ecosystem.
+
+---
+
+## 4. NEXT STEPS (Immediate Action)
+1.  **Film the Demo:** Use the implemented features (Dark Mode, Pet Click, Chat Send) to create a high-hype "Launch Trailer".
+2.  **Onboard Leadership:** Show Lilia and the Execs the `/team` dashboard.
+3.  **The "Fake Door" Test:** Start showing students the "Sustainability Pet" to gauge reaction before we write the complex backend logic for it.

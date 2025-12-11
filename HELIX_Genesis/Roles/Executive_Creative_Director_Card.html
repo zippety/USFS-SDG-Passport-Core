@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Executive Creative Director - Role Card</title>
+    <style>
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .card {
+            background: linear-gradient(135deg, #1e1b4b 0%, #312e81 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            max-width: 600px;
+            width: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(99, 102, 241, 0.2) 0%, rgba(99, 102, 241, 0) 70%);
+            transform: translate(30%, -30%);
+            border-radius: 50%;
+        }
+
+        .header {
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 24px;
+            margin-bottom: 24px;
+        }
+
+        .role-tag {
+            background-color: #fbbf24;
+            color: #1e1b4b;
+            font-weight: 700;
+            font-size: 12px;
+            padding: 4px 12px;
+            border-radius: 99px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 32px;
+            margin: 0;
+            font-weight: 800;
+            line-height: 1.1;
+            background: linear-gradient(to right, #ffffff, #e0e7ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        p {
+            color: #c7d2fe;
+            line-height: 1.6;
+            margin-top: 8px;
+            margin-bottom: 0;
+            font-size: 16px;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            color: #fbbf24;
+            font-size: 14px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .list-item {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+            color: #e0e7ff;
+            font-size: 15px;
+        }
+
+        .icon-box {
+            background: rgba(255, 255, 255, 0.1);
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 12px;
+        }
+
+        .footer {
+            margin-top: 32px;
+            padding-top: 24px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            font-size: 14px;
+            color: #818cf8;
+            font-style: italic;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <div class="header">
+            <span class="role-tag">Executive Leadership</span>
+            <h1>SDG Creative Director</h1>
+            <p>Leading the transformation from "Student Club" to "Smart Campus Living Lab".</p>
+        </div>
+
+        <div class="section">
+            <div class="section-title">
+                <span>⚡</span> Core Responsibilities
+            </div>
+            <div class="list-item">
+                <div class="icon-box">1</div>
+                <div>
+                    <strong>Product Vision & UX:</strong> Design an interface that "wows" students. Ensure the app feels
+                    like a premium "Smart Campus" tool, not a homework assignment.
+                </div>
+            </div>
+            <div class="list-item">
+                <div class="icon-box">2</div>
+                <div>
+                    <strong>Strategic Narrative:</strong> Align project goals with Seneca’s "Operational Efficiency"
+                    targets (AASHE EN-13) to unlock institutional funding.
+                </div>
+            </div>
+            <div class="list-item">
+                <div class="icon-box">3</div>
+                <div>
+                    <strong>Co-Creation:</strong> Build the platform WITH the community. Establish a "feedback loop"
+                    where student input directly shapes the product roadmap.
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-title">
+                <span>💎</span> Why This Role Matters
+            </div>
+            <p style="color: white; font-weight: 500;">
+                "A Marketing Director sells a finished product. A Creative Director shapes the product itself to ensure
+                it solves the right problems and is worth selling."
+            </p>
+        </div>
+
+        <div class="footer">
+            Official Role Specification • HELIX Genesis Phase 1
+        </div>
+    </div>
+</body>
+
+</html>

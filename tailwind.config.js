@@ -4,9 +4,15 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   theme: {
     extend: {
       colors: {
+        // USFS Brand Identity
+        'seneca-red': '#DA291C',
+        'usfs-green': '#006838',
+        'usfs-teal': '#009FA1',
+
         // SDG Color Palette
         sdg1: '#E5243B',   // No Poverty
         sdg2: '#DDA63A',   // Zero Hunger

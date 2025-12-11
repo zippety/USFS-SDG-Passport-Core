@@ -14,41 +14,41 @@ export default function QRScanner() {
   const [showSuccess, setShowSuccess] = useState(false);
   const [showSurvey, setShowSurvey] = useState(false);
   const [hasShownSurvey, setHasShownSurvey] = useState(false);
-  
+
   // Get available stamps (not yet collected)
   const availableStamps = mockStamps.filter(
     stamp => !user.stampsCollected.includes(stamp.sdgNumber)
   );
-  
+
   const handleScan = () => {
     setIsScanning(true);
-    
+
     // Simulate scanning delay
     setTimeout(() => {
       if (availableStamps.length > 0) {
         // Randomly select an available stamp
         const randomStamp = availableStamps[Math.floor(Math.random() * availableStamps.length)];
         const action = randomStamp.actions[0]; // Get first action
-        
+
         // Update user state
         const newStamps = [...user.stampsCollected, randomStamp.sdgNumber];
         const newPoints = user.points + action.points;
-        
+
         setUser({
           ...user,
           stampsCollected: newStamps,
           points: newPoints,
         });
-        
+
         setScannedStamp(randomStamp);
         setIsScanning(false);
         setShowSuccess(true);
-        
+
         // Hide success after 3 seconds, then show survey if first stamp
         setTimeout(() => {
           setShowSuccess(false);
           setScannedStamp(null);
-          
+
           // Show survey after first stamp collection (only once)
           if (!hasShownSurvey && user.stampsCollected.length === 0) {
             setTimeout(() => {
@@ -63,7 +63,7 @@ export default function QRScanner() {
       }
     }, 1500);
   };
-  
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 pb-8">
       <div className="max-w-2xl mx-auto px-4 pt-6">
@@ -74,10 +74,10 @@ export default function QRScanner() {
           <ArrowLeft className="w-5 h-5" />
           <span>Back to Passport</span>
         </button>
-        
+
         <h1 className="text-3xl font-bold text-white mb-2">Scan QR Code</h1>
         <p className="text-gray-300 mb-6">Point your camera at the booth QR code</p>
-        
+
         {/* Scanner View */}
         <div className="bg-black rounded-lg overflow-hidden shadow-2xl mb-6 relative">
           <div className="aspect-square relative">
@@ -95,7 +95,7 @@ export default function QRScanner() {
                 </div>
               )}
             </div>
-            
+
             {/* Scanner overlay frame */}
             <div className="absolute inset-0 flex items-center justify-center">
               <div className="w-64 h-64 border-4 border-green-500 rounded-lg relative">
@@ -107,7 +107,24 @@ export default function QRScanner() {
             </div>
           </div>
         </div>
-        
+
+        {/* Secret Code Input (For Demo) */}
+        <div className="mb-4">
+          <input
+            type="text"
+            placeholder="Enter Booth Code (Demo: 12345)"
+            className="w-full bg-gray-800 text-white rounded-lg p-4 text-center text-xl tracking-widest border border-gray-700 focus:border-green-500 focus:outline-none placeholder-gray-600"
+            onChange={(e) => {
+              // Simple check for the "cheat code"
+              if (e.target.value === "12345") {
+                // Automatically trigger scan if correct
+                handleScan();
+                e.target.value = ""; // Clear after scan
+              }
+            }}
+          />
+        </div>
+
         {/* Scan Button */}
         <button
           onClick={handleScan}
@@ -115,9 +132,9 @@ export default function QRScanner() {
           className="w-full bg-gradient-to-r from-green-500 to-green-600 text-white rounded-lg p-6 shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-3 font-semibold text-lg disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Scan className="w-6 h-6" />
-          <span>{isScanning ? 'Scanning...' : 'Tap to Scan QR Code'}</span>
+          <span>{isScanning ? 'Verifying Code...' : 'Simulate Camera Scan'}</span>
         </button>
-        
+
         {/* Success Animation */}
         {showSuccess && scannedStamp && (
           <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 animate-fadeIn">
@@ -145,7 +162,7 @@ export default function QRScanner() {
             </div>
           </div>
         )}
-        
+
         {/* Instructions */}
         <div className="mt-6 bg-gray-800 rounded-lg p-4">
           <h3 className="text-white font-semibold mb-2">How to use:</h3>
@@ -157,10 +174,10 @@ export default function QRScanner() {
           </ul>
         </div>
       </div>
-      
+
       {/* Survey Modal */}
-      <SurveyModal 
-        isOpen={showSurvey} 
+      <SurveyModal
+        isOpen={showSurvey}
         onClose={() => setShowSurvey(false)}
         trigger="stamp_collection"
       />
