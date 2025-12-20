@@ -22,6 +22,7 @@ export const mockStamps = [
     actions: [
       { id: 5, description: "Attend mental health workshop", points: 20, verified: false },
       { id: 6, description: "Join fitness challenge", points: 15, verified: false },
+      { id: 35, description: "🛌 Use Sleep Timer (7+ hrs tracked)", points: 10, verified: false },
     ]
   },
   {
@@ -91,25 +92,29 @@ export const mockStamps = [
   {
     sdgNumber: 12,
     name: "Responsible Consumption and Production",
+    partner: "Responsible Cafes TO",
     actions: [
-      { id: 23, description: "Bring reusable container to cafeteria", points: 15, verified: false },
-      { id: 24, description: "Attend sustainability fair", points: 25, verified: false },
+      { id: 23, description: "☕ Use reusable cup at Responsible Cafes partner", points: 20, verified: true, partner: "Responsible Cafes TO", estimatedTime: "5 mins" },
+      { id: 24, description: "Bring reusable container to cafeteria", points: 15, verified: false, estimatedTime: "5 mins" },
+      { id: 25, description: "Attend sustainability fair", points: 25, verified: false, estimatedTime: "1 hour" },
     ]
   },
   {
     sdgNumber: 13,
     name: "Climate Action",
+    prerequisites: [12],
     actions: [
-      { id: 25, description: "Attend climate action rally", points: 30, verified: true },
-      { id: 26, description: "Join tree planting event", points: 35, verified: false },
+      { id: 25, description: "Attend climate action rally", points: 30, verified: true, estimatedTime: "2 hours" },
+      { id: 26, description: "Join tree planting event", points: 35, verified: false, estimatedTime: "3 hours" },
     ]
   },
   {
     sdgNumber: 14,
     name: "Life Below Water",
+    prerequisites: [6, 13],
     actions: [
-      { id: 27, description: "Attend ocean conservation talk", points: 25, verified: false },
-      { id: 28, description: "Join beach cleanup", points: 40, verified: false },
+      { id: 27, description: "Attend ocean conservation talk", points: 25, verified: false, estimatedTime: "45 mins" },
+      { id: 28, description: "Join beach cleanup", points: 40, verified: false, estimatedTime: "4 hours" },
     ]
   },
   {

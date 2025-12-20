@@ -1,12 +1,32 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Trophy, Medal, Award, Users } from 'lucide-react';
-import { mockLeaderboard } from '../data/mockLeaderboard';
-import { mockUser } from '../data/mockUser';
+import { db } from '../firebase';
+import { collection, query, orderBy, limit, onSnapshot } from "firebase/firestore";
+import { getAuth } from "firebase/auth";
 
 export default function Leaderboard() {
   const navigate = useNavigate();
+  const [leaderboardData, setLeaderboardData] = useState([]);
   const [viewMode, setViewMode] = useState('individual'); // 'individual' or 'program'
+  const auth = getAuth();
+  const currentUser = auth.currentUser;
+
+  useEffect(() => {
+    // Real-time listener for top 50 users
+    const q = query(collection(db, "users"), orderBy("points", "desc"), limit(50));
+
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      const users = [];
+      let rank = 1;
+      querySnapshot.forEach((doc) => {
+        users.push({ ...doc.data(), id: doc.id, rank: rank++ });
+      });
+      setLeaderboardData(users);
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const getRankIcon = (rank) => {
     if (rank === 1) return <Trophy className="w-6 h-6 text-yellow-500" />;
@@ -16,13 +36,18 @@ export default function Leaderboard() {
   };
 
   // Calculate program leaderboard
-  const programStats = mockLeaderboard.reduce((acc, user) => {
-    if (!acc[user.program]) {
-      acc[user.program] = { program: user.program, totalPoints: 0, totalStamps: 0, count: 0 };
+  const programStats = leaderboardData.reduce((acc, user) => {
+    // Normalize placeholder values
+    let progName = user.program || "General Studies";
+    if (progName === "Undecided" || progName === "Unknown" || progName.includes("Reset")) {
+      progName = "General Studies";
     }
-    acc[user.program].totalPoints += user.points;
-    acc[user.program].totalStamps += user.stamps;
-    acc[user.program].count += 1;
+    if (!acc[progName]) {
+      acc[progName] = { program: progName, totalPoints: 0, totalStamps: 0, count: 0 };
+    }
+    acc[progName].totalPoints += user.points || 0;
+    acc[progName].totalStamps += (user.stampsCollected?.length || 0);
+    acc[progName].count += 1;
     return acc;
   }, {});
 
@@ -34,7 +59,9 @@ export default function Leaderboard() {
     }))
     .sort((a, b) => b.avgPoints - a.avgPoints);
 
-  const currentUserRank = mockLeaderboard.findIndex(u => u.name === mockUser.name) + 1;
+  const currentUserData = leaderboardData.find(u => u.uid === currentUser?.uid) || {
+    rank: '-', points: 0, stampsCollected: []
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-yellow-50 via-orange-50 to-red-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 pb-8 transition-colors duration-300">
@@ -59,8 +86,8 @@ export default function Leaderboard() {
           <button
             onClick={() => setViewMode('individual')}
             className={`flex-1 py-2 px-4 rounded-lg font-semibold transition-all ${viewMode === 'individual'
-                ? 'bg-blue-500 text-white shadow-md'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+              ? 'bg-blue-500 text-white shadow-md'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
               }`}
           >
             <Trophy className="w-4 h-4 inline mr-2" />
@@ -69,8 +96,8 @@ export default function Leaderboard() {
           <button
             onClick={() => setViewMode('program')}
             className={`flex-1 py-2 px-4 rounded-lg font-semibold transition-all ${viewMode === 'program'
-                ? 'bg-blue-500 text-white shadow-md'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
+              ? 'bg-blue-500 text-white shadow-md'
+              : 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600'
               }`}
           >
             <Users className="w-4 h-4 inline mr-2" />
@@ -83,15 +110,15 @@ export default function Leaderboard() {
           <div className="flex items-center justify-between">
             <div>
               <p className="text-sm opacity-90">Your Rank</p>
-              <p className="text-2xl font-bold">#{mockUser.rank}</p>
+              <p className="text-2xl font-bold">#{currentUserData.rank}</p>
             </div>
             <div className="text-right">
               <p className="text-sm opacity-90">Your Points</p>
-              <p className="text-2xl font-bold">{mockUser.points}</p>
+              <p className="text-2xl font-bold">{currentUserData.points || 0}</p>
             </div>
             <div className="text-right">
               <p className="text-sm opacity-90">Stamps</p>
-              <p className="text-2xl font-bold">{mockUser.stampsCollected.length}</p>
+              <p className="text-2xl font-bold">{currentUserData.stampsCollected?.length || 0}</p>
             </div>
           </div>
         </div>
@@ -100,11 +127,11 @@ export default function Leaderboard() {
         <div className="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transition-colors duration-300">
           {viewMode === 'individual' ? (
             <div className="divide-y divide-gray-200 dark:divide-gray-700">
-              {mockLeaderboard.map((user) => {
-                const isCurrentUser = user.name === mockUser.name;
+              {leaderboardData.map((user) => {
+                const isCurrentUser = user.uid === currentUser?.uid;
                 return (
                   <div
-                    key={user.rank}
+                    key={user.id}
                     className={`p-4 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors ${isCurrentUser ? 'bg-green-50 dark:bg-green-900/20 border-l-4 border-green-500' : ''
                       }`}
                   >
@@ -119,20 +146,25 @@ export default function Leaderboard() {
                         </div>
                         <div>
                           <p className={`font-semibold ${isCurrentUser ? 'text-green-700 dark:text-green-400' : 'text-gray-800 dark:text-white'}`}>
-                            {user.name}
+                            {user.displayName || user.email || "Anonymous"}
                             {isCurrentUser && <span className="ml-2 text-xs">(You)</span>}
                           </p>
-                          <p className="text-sm text-gray-600 dark:text-gray-400">{user.program}</p>
+                          <p className="text-sm text-gray-600 dark:text-gray-400">{(user.program && user.program !== 'Undecided') ? user.program : "General Studies"}</p>
                         </div>
                       </div>
                       <div className="text-right">
-                        <p className="text-lg font-bold text-gray-800 dark:text-white">{user.points} pts</p>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">{user.stamps} stamps</p>
+                        <p className="text-lg font-bold text-gray-800 dark:text-white">{user.points || 0} pts</p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">{user.stampsCollected?.length || 0} stamps</p>
                       </div>
                     </div>
                   </div>
                 );
               })}
+              {leaderboardData.length === 0 && (
+                <div className="p-8 text-center text-gray-500 dark:text-gray-400">
+                  No points recorded yet. Be the first! 🚀
+                </div>
+              )}
             </div>
           ) : (
             <div className="divide-y divide-gray-200 dark:divide-gray-700">

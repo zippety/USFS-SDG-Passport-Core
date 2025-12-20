@@ -2,7 +2,7 @@
 ## SDG Passport - Completed Workbook
 
 **Prepared by:** Duane "DJ" Bromfield
-**Business:** SDG Passport (SDG Innovation Labs Inc.)
+**Business:** SDG Passport
 **Date:** January 2025
 **Program:** HELIX Genesis Program (Pivot Update)
 

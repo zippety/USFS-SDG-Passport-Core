@@ -4,7 +4,7 @@ import { ArrowLeft, Calendar, MapPin, Clock, Users, CheckCircle } from 'lucide-r
 import { mockEvents } from '../data/mockEvents';
 import { getSDGColor, getSDGIcon } from '../utils/sdgData';
 
-export default function EventsCalendar() {
+export default function EventsCalendar({ user, showToast }) {
     const navigate = useNavigate();
     const [events, setEvents] = useState(mockEvents);
     const [bookedEvents, setBookedEvents] = useState([]);
@@ -12,11 +12,14 @@ export default function EventsCalendar() {
     const handleBookEvent = (eventId) => {
         if (!bookedEvents.includes(eventId)) {
             setBookedEvents([...bookedEvents, eventId]);
-            // Update local state to show spot taken (visually only for demo)
             setEvents(events.map(ev =>
                 ev.id === eventId ? { ...ev, spotsTaken: ev.spotsTaken + 1 } : ev
             ));
-            alert("✅ Event Booked! Add it to your calendar.");
+            if (showToast) {
+                showToast("✅ Event Booked! Check your email.");
+            } else {
+                alert("✅ Event Booked!");
+            }
         }
     };
 
@@ -35,21 +38,22 @@ export default function EventsCalendar() {
     });
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-900 dark:to-slate-900 pb-8 transition-colors duration-300">
-            <div className="max-w-4xl mx-auto px-4 pt-6">
+        <div className="min-h-screen bg-slate-50 dark:bg-slate-950 pb-12 transition-colors duration-300 font-sans">
+            <div className="max-w-4xl mx-auto px-4 pt-8">
                 <button
                     onClick={() => navigate('/')}
-                    className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+                    className="mb-8 flex items-center space-x-2 text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-all bg-white dark:bg-slate-800 px-4 py-2 rounded-full shadow-sm border border-slate-200 dark:border-slate-700 font-bold uppercase tracking-widest text-[10px]"
                 >
-                    <ArrowLeft className="w-5 h-5" />
+                    <ArrowLeft className="w-4 h-4" />
                     <span>Back to Passport</span>
                 </button>
 
-                <div className="flex items-center justify-between mb-8">
-                    <div>
-                        <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">Event Calendar</h1>
-                        <p className="text-gray-600 dark:text-gray-300">Book workshops & earn stamps</p>
+                <div className="mb-10">
+                    <div className="flex items-center gap-2 mb-2">
+                        <span className="bg-indigo-500 text-white text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-tighter">SDG Opportunities</span>
                     </div>
+                    <h1 className="text-4xl font-black text-slate-800 dark:text-white mb-2 uppercase tracking-tighter">Global Calendar</h1>
+                    <p className="text-slate-500 dark:text-slate-400 font-medium">Book workshops, field trips, and events to earn exclusive stamps.</p>
                 </div>
 
                 <div className="space-y-10">

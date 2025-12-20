@@ -2,7 +2,7 @@
 ## SDG Passport - Completed Workbook
 
 **Prepared by:** Duane "DJ" Bromfield
-**Business:** SDG Passport (SDG Innovation Labs Inc.)
+**Business:** SDG Passport
 **Date:** January 2025
 **Program:** HELIX Genesis - Business Model Canvas 2
 
@@ -18,10 +18,11 @@
 
 ## REFLECTIVE EXERCISE 1: IDENTIFY KEY RESOURCES
 
-### RESOURCE 1: **Intellectual Property (The Tech)**
-- **SDG Passport App:** React Native Mobile App (Frontend).
-- **Admin Dashboard:** Web-based AASHE reporting tool.
-- **Geofencing Algorithm:** Security tech to prevent fraud.
+### RESOURCE 1: **Technology (The Platform)**
+- **SDG Passport App:** Web-based platform with mobile-friendly interface.
+- **Admin Dashboard:** AASHE STARS reporting tool for institutions.
+- **Anti-Fraud Tech:** Geofencing + rotating QR codes to verify attendance.
+- **Built by:** DJ Bromfield (Founder & Technical Lead).
 
 ### RESOURCE 2: **Human Resources (The Team)**
 - **Founder (DJ):** Creative Director & Product Lead.
@@ -32,6 +33,7 @@
 - **Seneca HELIX:** Providing legal structure and grants.
 - **United Seneca for Sustainability (USFS):** Providing the initial user base.
 - **Office of Sustainability:** Providing the data requirements.
+- **Responsible Cafes TO:** Partner for real-world BYO cup tracking (proven 40% cup reduction).
 
 ### RESOURCE 4: **Financial Resources**
 - **Catalyst Grant:** $5,000 target.

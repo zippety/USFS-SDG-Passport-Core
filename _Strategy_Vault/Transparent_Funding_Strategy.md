@@ -42,14 +42,20 @@ But the "Group of Nine" (Execs) are worried about **Bureaucracy**:
 
 ## 💼 Blocker 3: "You need to be Incorporated"
 **The Fear**: Liability.
-**The Solution**: **Federal Incorporation (The $200 Fix).**
+**The Solution**: **Federal Non-Profit Incorporation (The $200 Fix).**
+
+> [!CAUTION]
+> **MUST be Non-Profit** to get 100% Canada Summer Jobs subsidy. For-Profit "Inc." only gets 50%.
 
 *   **The Reality**: They are right. You should be incorporated. It protects *you* (Duane) from being sued personally if the app crashes or breaks privacy laws.
 *   **The Move**:
-    1.  File for a **Federal Corporation** (Canada Inc.) online (~$200).
-    2.  Name it: **"SDG Innovation Labs Inc."** (Sound professional, not like a club).
+    1.  File for a **Federal Non-Profit Corporation** online (~$200).
+    2.  Name it: **"SDG Innovation Labs"** (Sound professional, not like a club).
     3.  **Bank Account**: Open a business account (RBC/TD).
-    4.  **Result**: You can now legally send an Invoice to the Student Union.
+    4.  **Result**: You can now legally send an Invoice to the Student Union AND get 100% CSJ wage subsidies.
+
+> [!WARNING]
+> **Arm's Length Rule**: Directors (founders) cannot be hired using CSJ/SWPP. Use subsidies to hire club members; founders get paid via AASHE contracts.
 
 ---
 

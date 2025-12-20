@@ -12,9 +12,123 @@ import {
     TrendingUp,
     MapPin
 } from 'lucide-react';
+import { getAuth } from "firebase/auth";
+import { doc, updateDoc, increment, setDoc } from "firebase/firestore";
+import { db } from '../firebase';
 
-const OpsDashboard = () => {
+// --- Subcomponents for Clean Code ---
+
+const StatCard = ({ icon, label, value, sub, isLive }) => (
+    <div className="bg-slate-800 p-5 rounded-xl border border-slate-700">
+        <div className="flex justify-between items-start mb-4">
+            <div className="p-2 bg-slate-900 rounded-lg border border-slate-700">{icon}</div>
+            {isLive && <span className="animate-pulse w-2 h-2 rounded-full bg-green-500"></span>}
+        </div>
+        <div className="text-3xl font-bold mb-1">{value}</div>
+        <div className="text-xs text-slate-400 font-medium uppercase tracking-wide">{label}</div>
+        <div className="text-[10px] text-slate-500 mt-1">{sub}</div>
+    </div>
+);
+
+const Hotspot = ({ top, left, label, status }) => {
+    const colors = {
+        audit: 'bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.6)]',
+        active: 'bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.6)]',
+        idle: 'bg-slate-500'
+    };
+
+    return (
+        <div className="absolute transform -translate-x-1/2 -translate-y-1/2 group cursor-pointer" style={{ top, left }}>
+            <div className={`w-4 h-4 rounded-full border-2 border-white ${colors[status]} relative`}>
+                <div className={`absolute -inset-1 rounded-full opacity-50 ${status === 'audit' ? 'animate-ping bg-indigo-400' : ''}`}></div>
+            </div>
+            <div className="absolute top-6 left-1/2 transform -translate-x-1/2 bg-slate-900 text-xs px-2 py-1 rounded border border-slate-700 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                {label}
+            </div>
+        </div>
+    );
+};
+
+const LogRow = ({ time, loc, mission, result, save, isNew }) => (
+    <tr className={`border-b border-slate-700/50 hover:bg-slate-700/30 transition-colors ${isNew ? 'bg-indigo-900/10' : ''}`}>
+        <td className="px-4 py-3 font-mono text-xs text-slate-400">{time}</td>
+        <td className="px-4 py-3 font-medium">{loc}</td>
+        <td className="px-4 py-3 text-slate-300">{mission}</td>
+        <td className="px-4 py-3">
+            <span className={`text-[10px] px-2 py-0.5 rounded uppercase font-bold ${result.includes('Issue') ? 'bg-red-500/20 text-red-400' :
+                result.includes('Contamination') ? 'bg-orange-500/20 text-orange-400' :
+                    'bg-emerald-500/20 text-emerald-400'
+                }`}>
+                {result}
+            </span>
+        </td>
+        <td className="px-4 py-3 font-mono text-emerald-400">{save}</td>
+    </tr>
+);
+
+const AlertItem = ({ type, msg }) => {
+    const icons = {
+        critical: <AlertTriangle size={16} className="text-red-400" />,
+        warning: <Zap size={16} className="text-orange-400" />,
+        success: <CheckCircle size={16} className="text-emerald-400" />
+    };
+    return (
+        <div className="flex items-start gap-3 p-3 bg-slate-900/50 rounded border border-slate-700/50">
+            <div className="mt-0.5">{icons[type]}</div>
+            <p className="text-sm text-slate-300 leading-tight">{msg}</p>
+        </div>
+    );
+};
+
+const OpsDashboard = ({ showToast }) => {
     const [activeMission, setActiveMission] = useState('Newnham Cafeteria');
+    const auth = getAuth();
+    const currentUser = auth.currentUser;
+
+    // --- ADMIN CHEAT CODES ---
+    const adminSetLevel = async (newLevel) => {
+        if (!currentUser) return;
+        const userRef = doc(db, "users", currentUser.uid);
+        await updateDoc(userRef, { level: newLevel, points: newLevel * 100 }); // Rough calculation
+        if (showToast) showToast(`Level set to ${newLevel}`); else alert(`Level set to ${newLevel}`);
+    };
+
+    const adminAddXP = async (amount) => {
+        if (!currentUser) return;
+        const userRef = doc(db, "users", currentUser.uid);
+        await updateDoc(userRef, { points: increment(amount) });
+        if (showToast) showToast(`Cheat: Added ${amount} XP`); else alert(`Added ${amount} XP`);
+    };
+
+    const adminSimulateDonation = async () => {
+        if (!currentUser) return;
+        const userRef = doc(db, "users", currentUser.uid);
+        // Add 500 XP and log a "donation" stamp
+        await updateDoc(userRef, {
+            points: increment(500),
+            // We could add a stamp here too if we want, for now just points
+        });
+        if (showToast) showToast(`$5 Donation Sim: +500 XP & 5 Trees!`); else alert(`$5 Donation Sim: +500 XP & 5 Trees!`);
+    };
+
+    const adminResetProfile = async () => {
+        if (!confirm("ARE YOU SURE? This scrapes your profile clean.")) return;
+        if (!currentUser) return;
+        const userRef = doc(db, "users", currentUser.uid);
+        await setDoc(userRef, {
+            uid: currentUser.uid,
+            email: currentUser.email,
+            displayName: currentUser.displayName,
+            photoURL: currentUser.photoURL,
+            points: 0,
+            level: 1,
+            role: "Student",
+            program: "Undecided - Reset",
+            stampsCollected: [],
+            createdAt: new Date()
+        });
+        if (showToast) showToast("Profile wiped. Fresh start!"); else alert("Profile wiped. Fresh start!");
+    };
 
     // Mock Data for "Live Flow"
     const [metrics, setMetrics] = useState({
@@ -113,14 +227,34 @@ const OpsDashboard = () => {
                     </div>
 
                     {/* Simulated Map Visual */}
-                    <div className="relative h-[300px] w-full bg-slate-900 rounded-lg overflow-hidden mb-6 border border-slate-700/50">
+                    <div className="relative h-[300px] w-full bg-slate-900 rounded-3xl overflow-hidden mb-6 border border-slate-700/50 shadow-inner">
                         {/* Simple Map Layout */}
                         <div className="absolute inset-0 opacity-20 bg-[url('https://www.senecapolytechnic.ca/content/dam/seneca/about/campuses/newnham-map.jpg')] bg-cover bg-center grayscale"></div>
 
+                        {/* Map Overlay Grid */}
+                        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_0%,rgba(15,23,42,0.8)_100%)]"></div>
+
                         {/* Hotspots */}
-                        <Hotspot top="30%" left="40%" label="Cafeteria" status="audit" />
-                        <Hotspot top="60%" left="70%" label="CITE Building" status="active" />
-                        <Hotspot top="20%" left="80%" label="Residence" status="idle" />
+                        <Hotspot top="30%" left="40%" label="Cafeteria (SDG 2/12): 12 Active Audits" status="audit" />
+                        <Hotspot top="60%" left="70%" label="CITE Building (SDG 7/9): High Efficiency" status="active" />
+                        <Hotspot top="20%" left="80%" label="Residence (SDG 11): Idle" status="idle" />
+
+                        {/* Map Legend */}
+                        <div className="absolute bottom-4 left-4 bg-slate-900/80 backdrop-blur border border-slate-700 p-3 rounded-xl text-[10px] space-y-2">
+                            <h4 className="font-bold text-slate-400 uppercase tracking-widest border-b border-slate-700 pb-1 mb-2">Network Legend</h4>
+                            <div className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+                                <span className="text-slate-300">LIVE AUDIT IN PROGRESS</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
+                                <span className="text-slate-300">VALIDATED GREEN ZONE</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-slate-500"></span>
+                                <span className="text-slate-300">IDLE / REPORTING NODE</span>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Recent Logs Table */}
@@ -145,8 +279,72 @@ const OpsDashboard = () => {
                     </div>
                 </div>
 
-                {/* RIGHT: ALERTS & CAMPAIGNS */}
+                {/* RIGHT: ALERTS & CAMPAIGNS & ADMINISTRATION */}
                 <div className="space-y-6">
+
+                    {/* --- NEW: ADMIN CHEAT PANEL --- */}
+                    <div className="bg-slate-800 rounded-xl border border-purple-500/50 p-6 shadow-[0_0_20px_rgba(168,85,247,0.1)] relative overflow-hidden group">
+                        <div className="absolute top-0 right-0 p-2 opacity-50">
+                            <Zap className="text-purple-500" size={100} strokeWidth={0.5} />
+                        </div>
+
+                        <div className="relative z-10">
+                            <h3 className="text-sm font-bold text-purple-400 uppercase tracking-widest mb-4 flex items-center gap-2">
+                                <span className="bg-purple-500/20 p-1 rounded"><Zap size={14} /></span>
+                                Admin Gamification Console
+                            </h3>
+
+                            <div className="space-y-4">
+                                {/* Level Controls */}
+                                <div>
+                                    <p className="text-xs text-slate-500 mb-2 font-mono">SET LEVEL</p>
+                                    <div className="flex gap-2">
+                                        {[1, 5, 10, 20].map(lvl => (
+                                            <button
+                                                key={lvl}
+                                                onClick={() => adminSetLevel(lvl)}
+                                                className="flex-1 bg-slate-900 border border-slate-700 hover:border-purple-500 hover:text-purple-400 text-xs py-2 rounded transition-all"
+                                            >
+                                                Lvl {lvl}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
+
+                                {/* XP Controls */}
+                                <div>
+                                    <p className="text-xs text-slate-500 mb-2 font-mono">INJECT XP</p>
+                                    <div className="flex gap-2">
+                                        <button onClick={() => adminAddXP(100)} className="flex-1 bg-slate-900 border border-slate-700 hover:bg-emerald-900/30 hover:border-emerald-500 hover:text-emerald-400 text-xs py-2 rounded transition-all">+100</button>
+                                        <button onClick={() => adminAddXP(500)} className="flex-1 bg-slate-900 border border-slate-700 hover:bg-emerald-900/30 hover:border-emerald-500 hover:text-emerald-400 text-xs py-2 rounded transition-all">+500</button>
+                                        <button onClick={() => adminAddXP(1000)} className="flex-1 bg-slate-900 border border-slate-700 hover:bg-emerald-900/30 hover:border-emerald-500 hover:text-emerald-400 text-xs py-2 rounded transition-all">+1k</button>
+                                    </div>
+                                </div>
+
+                                {/* Donation Sim */}
+                                <div className="pt-2 border-t border-slate-700">
+                                    <button
+                                        onClick={() => adminSimulateDonation()}
+                                        className="w-full bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold py-3 rounded-lg flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all"
+                                    >
+                                        <DollarSign size={16} />
+                                        Simulate $5 Donation
+                                    </button>
+                                    <p className="text-[10px] text-center text-slate-500 mt-2">Effects: +500 XP, Plant 5 Trees, Trigger Animation</p>
+                                </div>
+
+                                {/* Reset */}
+                                <div className="pt-2 border-t border-slate-700 flex justify-end">
+                                    <button
+                                        onClick={() => adminResetProfile()}
+                                        className="text-xs text-red-500 hover:text-red-400 underline decoration-red-500/30"
+                                    >
+                                        reset my profile data
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
 
                     {/* Active Campaign */}
                     <div className="bg-slate-800 rounded-xl border border-slate-700 p-6">
@@ -184,68 +382,6 @@ const OpsDashboard = () => {
     );
 };
 
-// --- Subcomponents for Clean Code ---
-
-const StatCard = ({ icon, label, value, sub, isLive }) => (
-    <div className="bg-slate-800 p-5 rounded-xl border border-slate-700">
-        <div className="flex justify-between items-start mb-4">
-            <div className="p-2 bg-slate-900 rounded-lg border border-slate-700">{icon}</div>
-            {isLive && <span className="animate-pulse w-2 h-2 rounded-full bg-green-500"></span>}
-        </div>
-        <div className="text-3xl font-bold mb-1">{value}</div>
-        <div className="text-xs text-slate-400 font-medium uppercase tracking-wide">{label}</div>
-        <div className="text-[10px] text-slate-500 mt-1">{sub}</div>
-    </div>
-);
-
-const Hotspot = ({ top, left, label, status }) => {
-    const colors = {
-        audit: 'bg-indigo-500 shadow-[0_0_15px_rgba(99,102,241,0.6)]',
-        active: 'bg-emerald-500 shadow-[0_0_15px_rgba(16,185,129,0.6)]',
-        idle: 'bg-slate-500'
-    };
-
-    return (
-        <div className="absolute transform -translate-x-1/2 -translate-y-1/2 group cursor-pointer" style={{ top, left }}>
-            <div className={`w-4 h-4 rounded-full border-2 border-white ${colors[status]} relative`}>
-                <div className={`absolute -inset-1 rounded-full opacity-50 ${status === 'audit' ? 'animate-ping bg-indigo-400' : ''}`}></div>
-            </div>
-            <div className="absolute top-6 left-1/2 transform -translate-x-1/2 bg-slate-900 text-xs px-2 py-1 rounded border border-slate-700 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
-                {label}
-            </div>
-        </div>
-    );
-};
-
-const LogRow = ({ time, loc, mission, result, save, isNew }) => (
-    <tr className={`border-b border-slate-700/50 hover:bg-slate-700/30 transition-colors ${isNew ? 'bg-indigo-900/10' : ''}`}>
-        <td className="px-4 py-3 font-mono text-xs text-slate-400">{time}</td>
-        <td className="px-4 py-3 font-medium">{loc}</td>
-        <td className="px-4 py-3 text-slate-300">{mission}</td>
-        <td className="px-4 py-3">
-            <span className={`text-[10px] px-2 py-0.5 rounded uppercase font-bold ${result.includes('Issue') ? 'bg-red-500/20 text-red-400' :
-                result.includes('Contamination') ? 'bg-orange-500/20 text-orange-400' :
-                    'bg-emerald-500/20 text-emerald-400'
-                }`}>
-                {result}
-            </span>
-        </td>
-        <td className="px-4 py-3 font-mono text-emerald-400">{save}</td>
-    </tr>
-);
-
-const AlertItem = ({ type, msg }) => {
-    const icons = {
-        critical: <AlertTriangle size={16} className="text-red-400" />,
-        warning: <Zap size={16} className="text-orange-400" />,
-        success: <CheckCircle size={16} className="text-emerald-400" />
-    };
-    return (
-        <div className="flex items-start gap-3 p-3 bg-slate-900/50 rounded border border-slate-700/50">
-            <div className="mt-0.5">{icons[type]}</div>
-            <p className="text-sm text-slate-300 leading-tight">{msg}</p>
-        </div>
-    );
-};
+// --- Subcomponents moved to top ---
 
 export default OpsDashboard;

@@ -5,97 +5,138 @@ import { mockStamps } from '../data/mockStamps';
 import { mockUser } from '../data/mockUser';
 import { getSDGColor, getSDGName, getSDGIcon } from '../utils/sdgData';
 
-export default function StampCatalog() {
+export default function StampCatalog({ user }) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const selectedSDG = searchParams.get('sdg') ? parseInt(searchParams.get('sdg')) : null;
-  const [user] = useState(mockUser);
+  const [expandedSDG, setExpandedSDG] = useState(selectedSDG);
 
   const filteredStamps = selectedSDG
     ? mockStamps.filter(s => s.sdgNumber === selectedSDG)
     : mockStamps;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 pb-8 transition-colors duration-300">
-      <div className="max-w-4xl mx-auto px-4 pt-6">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900 pb-12 transition-colors duration-300 font-sans">
+      <div className="max-w-4xl mx-auto px-4 pt-8">
         <button
           onClick={() => navigate('/')}
-          className="mb-4 flex items-center space-x-2 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+          className="mb-8 flex items-center space-x-2 text-slate-500 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-all bg-white dark:bg-slate-800 px-4 py-2 rounded-full shadow-sm border border-slate-200 dark:border-slate-700 font-bold uppercase tracking-widest text-[10px]"
         >
-          <ArrowLeft className="w-5 h-5" />
+          <ArrowLeft className="w-4 h-4" />
           <span>Back to Passport</span>
         </button>
 
-        <h1 className="text-3xl font-bold text-gray-800 dark:text-white mb-2">SDG Catalog</h1>
-        <p className="text-gray-600 dark:text-gray-300 mb-6">Explore all 17 Sustainable Development Goals</p>
+        <h1 className="text-4xl font-black text-slate-800 dark:text-white mb-2 uppercase tracking-tighter">SDG Catalog</h1>
+        <p className="text-slate-500 dark:text-slate-400 mb-8 font-medium">Master the 17 Sustainable Development Goals to earn your global certification.</p>
 
-        <div className="space-y-4">
+        <div className="space-y-6">
           {filteredStamps.map((stamp) => {
-            const isCollected = user.stampsCollected.includes(stamp.sdgNumber);
+            const isCollected = user.stampsCollected?.includes(stamp.sdgNumber);
+            const isExpanded = expandedSDG === stamp.sdgNumber;
             const color = getSDGColor(stamp.sdgNumber);
             const icon = getSDGIcon(stamp.sdgNumber);
 
             return (
               <div
                 key={stamp.sdgNumber}
-                className="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 hover:shadow-lg transition-all duration-300"
-                style={{ borderLeft: `8px solid ${color}` }}
+                className={`bg-white dark:bg-slate-800 rounded-[2rem] shadow-xl overflow-hidden transition-all duration-500 border-2 ${isExpanded ? 'border-emerald-500/50' : 'border-transparent'}`}
               >
-                <div className="flex items-start space-x-4">
-                  <div
-                    className="w-16 h-16 rounded-lg flex items-center justify-center text-3xl flex-shrink-0 shadow-sm"
-                    style={{ backgroundColor: `${color}20` }}
-                  >
-                    {icon}
-                  </div>
+                <div
+                  className="p-8 cursor-pointer group"
+                  onClick={() => setExpandedSDG(isExpanded ? null : stamp.sdgNumber)}
+                >
+                  <div className="flex items-center space-x-6">
+                    <div
+                      className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform duration-300"
+                      style={{ backgroundColor: `${color}15`, color: color }}
+                    >
+                      {icon}
+                    </div>
 
-                  <div className="flex-1">
-                    <div className="flex items-center justify-between mb-2">
-                      <div>
-                        <h3 className="text-xl font-bold text-gray-800 dark:text-gray-100">
-                          SDG {stamp.sdgNumber}: {stamp.name}
-                        </h3>
-                        <div className="flex items-center space-x-2 mt-1">
+                    <div className="flex-1">
+                      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                          <div className="flex items-center gap-2 mb-1">
+                            <span className="text-[10px] font-black uppercase tracking-widest opacity-50">Goal {stamp.sdgNumber}</span>
+                            {stamp.prerequisites && (
+                              <div className="flex items-center gap-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-[9px] font-black px-2 py-0.5 rounded uppercase">
+                                <Lock size={10} />
+                                Req: {stamp.prerequisites.map(p => `SDG ${p}`).join(', ')}
+                              </div>
+                            )}
+                          </div>
+                          <h3 className="text-2xl font-black text-slate-800 dark:text-white uppercase tracking-tighter">
+                            {stamp.name}
+                          </h3>
+                        </div>
+
+                        <div className="flex items-center gap-3">
                           {isCollected ? (
-                            <span className="text-green-600 dark:text-green-400 text-sm font-medium flex items-center space-x-1 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded">
+                            <span className="text-emerald-600 dark:text-emerald-400 text-[10px] font-black flex items-center gap-1 bg-emerald-50 dark:bg-emerald-900/20 px-4 py-2 rounded-full uppercase tracking-widest">
                               <CheckCircle className="w-4 h-4" />
-                              <span>Collected</span>
+                              Collected
                             </span>
                           ) : (
-                            <span className="text-gray-500 dark:text-gray-400 text-sm font-medium flex items-center space-x-1 bg-gray-100 dark:bg-gray-700/50 px-2 py-1 rounded">
-                              <Lock className="w-4 h-4" />
-                              <span>Locked • Complete actions to unlock</span>
-                            </span>
+                            <button className="bg-slate-100 dark:bg-slate-700 text-slate-500 text-[10px] font-black px-4 py-2 rounded-full uppercase tracking-widest hover:bg-emerald-500 hover:text-white transition-colors">
+                              View Missions
+                            </button>
                           )}
                         </div>
                       </div>
                     </div>
+                  </div>
+                </div>
 
-                    <div className="mt-4">
-                      <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Available Actions:</p>
-                      <div className="space-y-2">
+                {/* Expanded Details */}
+                {isExpanded && (
+                  <div className="px-8 pb-8 pt-0 animate-fadeIn bg-slate-50/50 dark:bg-black/10 border-t dark:border-slate-700/50">
+                    <div className="py-6">
+                      <div className="flex items-center justify-between mb-4">
+                        <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest">Available Missions</h4>
+                        <span className="text-[10px] font-bold text-slate-500 italic">Complete any to earn stamp</span>
+                      </div>
+
+                      <div className="grid gap-3">
                         {stamp.actions.map((action) => (
                           <div
                             key={action.id}
-                            className="flex items-center justify-between p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg border border-transparent hover:border-gray-200 dark:hover:border-gray-600 transition-colors"
+                            className="flex flex-col md:flex-row md:items-center justify-between p-5 bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 hover:border-emerald-500/30 transition-all shadow-sm group/action"
                           >
-                            <span className="text-sm text-gray-700 dark:text-gray-200">{action.description}</span>
-                            <div className="flex items-center space-x-2">
-                              <span className="text-xs font-semibold text-gray-600 dark:text-gray-400">
-                                +{action.points} pts
-                              </span>
-                              {action.verified && (
-                                <span className="px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 rounded text-xs font-medium border border-green-200 dark:border-green-800">
-                                  Verified
+                            <div className="flex-1 mb-3 md:mb-0">
+                              <p className="text-slate-800 dark:text-slate-200 font-bold mb-1">{action.description}</p>
+                              <div className="flex items-center gap-4 text-[10px] font-bold uppercase tracking-widest">
+                                <span className="text-indigo-500 flex items-center gap-1">
+                                  ⌛ {action.estimatedTime || '30 mins'}
                                 </span>
-                              )}
+                                {action.verified && (
+                                  <span className="text-emerald-500 flex items-center gap-1">
+                                    ✓ Instant Result
+                                  </span>
+                                )}
+                              </div>
+                            </div>
+
+                            <div className="flex items-center justify-between md:justify-end gap-6">
+                              <div className="text-right">
+                                <span className="block text-lg font-black text-indigo-500 leading-none">+{action.points}</span>
+                                <span className="text-[9px] font-black text-slate-400 uppercase tracking-tighter">SDG Points</span>
+                              </div>
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  navigate('/scan');
+                                }}
+                                className="bg-emerald-500 text-white px-6 py-2.5 rounded-xl font-black text-[10px] uppercase tracking-widest shadow-lg shadow-emerald-500/20 hover:scale-105 transition-transform"
+                              >
+                                Start Mission
+                              </button>
                             </div>
                           </div>
                         ))}
                       </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
             );
           })}

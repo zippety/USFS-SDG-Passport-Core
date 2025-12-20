@@ -5,6 +5,10 @@ export const mockUser = {
   role: "SDG Creative Director",
   avatar: "/dj_face.png",
   points: 1250,
+  level: 7,
+  xp: 750,
+  xpToNextLevel: 1000,
+  rank: 1,
   stampsCollected: [13, 4, 1, 5, 8],
   recentActions: [
     { id: 1, action: "Attended Climate Workshop", date: "2023-10-15", points: 50 },

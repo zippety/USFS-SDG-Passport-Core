@@ -1,67 +1,96 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Scan, CheckCircle, Sparkles } from 'lucide-react';
-import { mockUser } from '../data/mockUser';
+import { ArrowLeft, Scan, CheckCircle, Sparkles, Zap } from 'lucide-react';
+import confetti from 'canvas-confetti';
 import { mockStamps } from '../data/mockStamps';
 import { getSDGColor, getSDGName, getSDGIcon } from '../utils/sdgData';
 import SurveyModal from './SurveyModal';
+import { db } from '../firebase';
+import { doc, updateDoc, arrayUnion, increment } from 'firebase/firestore';
 
-export default function QRScanner() {
+export default function QRScanner({ user, showToast }) {
   const navigate = useNavigate();
-  const [user, setUser] = useState(mockUser);
   const [isScanning, setIsScanning] = useState(false);
   const [scannedStamp, setScannedStamp] = useState(null);
   const [showSuccess, setShowSuccess] = useState(false);
   const [showSurvey, setShowSurvey] = useState(false);
   const [hasShownSurvey, setHasShownSurvey] = useState(false);
+  const [inputCode, setInputCode] = useState("");
 
   // Get available stamps (not yet collected)
   const availableStamps = mockStamps.filter(
-    stamp => !user.stampsCollected.includes(stamp.sdgNumber)
+    stamp => !user.stampsCollected?.includes(stamp.sdgNumber)
   );
 
-  const handleScan = () => {
+  const handleScan = async (code = null) => {
+    // Check if stamps are available BEFORE scanning
+    if (availableStamps.length === 0) {
+      if (showToast) showToast('All stamps collected! 🎉');
+      return;
+    }
+
     setIsScanning(true);
 
-    // Simulate scanning delay
-    setTimeout(() => {
-      if (availableStamps.length > 0) {
-        // Randomly select an available stamp
-        const randomStamp = availableStamps[Math.floor(Math.random() * availableStamps.length)];
-        const action = randomStamp.actions[0]; // Get first action
+    // Determine which stamp to award based on code or random
+    const randomStamp = code === "12345"
+      ? availableStamps[0] // Award first available for demo code
+      : availableStamps[Math.floor(Math.random() * availableStamps.length)];
 
-        // Update user state
-        const newStamps = [...user.stampsCollected, randomStamp.sdgNumber];
-        const newPoints = user.points + action.points;
+    const action = randomStamp.actions[0];
 
-        setUser({
-          ...user,
-          stampsCollected: newStamps,
-          points: newPoints,
-        });
+    // Simulate scanning delay 
+    await new Promise(resolve => setTimeout(resolve, 1500));
 
-        setScannedStamp(randomStamp);
-        setIsScanning(false);
-        setShowSuccess(true);
+    try {
+      // Update Firestore
+      const userRef = doc(db, "users", user.uid);
+      await updateDoc(userRef, {
+        stampsCollected: arrayUnion(randomStamp.sdgNumber),
+        points: increment(action.points)
+      });
 
-        // Hide success after 3 seconds, then show survey if first stamp
-        setTimeout(() => {
-          setShowSuccess(false);
-          setScannedStamp(null);
+      setScannedStamp(randomStamp);
+      setIsScanning(false);
+      setShowSuccess(true);
+      if (showToast) showToast(`Stamp Collected: ${randomStamp.name}!`);
 
-          // Show survey after first stamp collection (only once)
-          if (!hasShownSurvey && user.stampsCollected.length === 0) {
-            setTimeout(() => {
-              setShowSurvey(true);
-              setHasShownSurvey(true);
-            }, 500);
-          }
-        }, 3000);
-      } else {
-        setIsScanning(false);
-        alert('All stamps collected! 🎉');
+      // 🎉 CONFETTI CELEBRATION!
+      confetti({
+        particleCount: 150,
+        spread: 100,
+        origin: { y: 0.6 },
+        colors: ['#006838', '#009FA1', '#FFD700', '#22c55e', '#ef4444']
+      });
+
+      // Hide success after 3 seconds
+      setTimeout(() => {
+        setShowSuccess(false);
+        setScannedStamp(null);
+
+        // Show survey after first stamp collection (only once)
+        if (!hasShownSurvey && user.stampsCollected?.length === 0) {
+          setShowSurvey(true);
+          setHasShownSurvey(true);
+        }
+      }, 3000);
+
+    } catch (err) {
+      console.error("Scan error:", err);
+      setIsScanning(false);
+      if (showToast) showToast("Error saving stamp. Try again.");
+    }
+  };
+
+  const handleCodeSubmit = (e) => {
+    if (e.key === 'Enter' || inputCode === "12345") {
+      if (inputCode === "12345") {
+        setInputCode("");
+        handleScan("12345");
+      } else if (inputCode.length > 0) {
+        if (showToast) showToast("Invalid Demo Code");
+        setInputCode("");
       }
-    }, 1500);
+    }
   };
 
   return (
@@ -109,19 +138,16 @@ export default function QRScanner() {
         </div>
 
         {/* Secret Code Input (For Demo) */}
-        <div className="mb-4">
+        <div className="mb-6">
+          <p className="text-[10px] text-gray-500 uppercase font-black tracking-widest mb-2 ml-2">Hardware Bypass (Demo Code)</p>
           <input
             type="text"
-            placeholder="Enter Booth Code (Demo: 12345)"
-            className="w-full bg-gray-800 text-white rounded-lg p-4 text-center text-xl tracking-widest border border-gray-700 focus:border-green-500 focus:outline-none placeholder-gray-600"
-            onChange={(e) => {
-              // Simple check for the "cheat code"
-              if (e.target.value === "12345") {
-                // Automatically trigger scan if correct
-                handleScan();
-                e.target.value = ""; // Clear after scan
-              }
-            }}
+            value={inputCode}
+            onKeyDown={handleCodeSubmit}
+            onChange={(e) => setInputCode(e.target.value)}
+            placeholder="ENTER BOOTH CODE"
+            className="w-full bg-gray-800 text-white rounded-xl p-6 text-center text-2xl font-black tracking-widest border border-gray-700 focus:border-emerald-500 focus:outline-none placeholder-gray-700 transition-all"
+            disabled={isScanning}
           />
         </div>
 
@@ -163,13 +189,37 @@ export default function QRScanner() {
           </div>
         )}
 
+        {/* Partner Location: Responsible Cafes */}
+        <div className="mt-6 bg-gradient-to-r from-amber-900/50 to-amber-800/50 rounded-lg p-4 border border-amber-700/50">
+          <div className="flex items-center gap-2 mb-3">
+            <span className="text-2xl">☕</span>
+            <h3 className="text-white font-semibold">Responsible Cafes Partner</h3>
+          </div>
+          <div className="flex gap-4">
+            <img
+              src="/table_tent_example.png"
+              alt="Look for this table tent at partner cafés"
+              className="w-32 h-32 object-cover rounded-lg border-2 border-amber-600/50"
+            />
+            <div className="flex-1">
+              <p className="text-amber-100 text-sm mb-2">Look for this table tent at partner cafés!</p>
+              <ul className="text-amber-200 text-xs space-y-1">
+                <li>✓ Bring your reusable cup</li>
+                <li>✓ Buy your drink</li>
+                <li>✓ Scan the QR on the table tent</li>
+                <li>✓ Earn 20 SDG points!</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
         {/* Instructions */}
-        <div className="mt-6 bg-gray-800 rounded-lg p-4">
+        <div className="mt-4 bg-gray-800 rounded-lg p-4">
           <h3 className="text-white font-semibold mb-2">How to use:</h3>
           <ul className="text-gray-300 text-sm space-y-1">
-            <li>• Visit a pop-up booth on campus</li>
+            <li>• Visit a pop-up booth or partner café</li>
             <li>• Complete the SDG action</li>
-            <li>• Scan the QR code at the booth</li>
+            <li>• Scan the QR code</li>
             <li>• Get instant stamp and points!</li>
           </ul>
         </div>

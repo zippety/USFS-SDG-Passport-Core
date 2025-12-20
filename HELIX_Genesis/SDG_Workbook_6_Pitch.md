@@ -2,7 +2,7 @@
 ## SDG Passport - Completed Workbook
 
 **Prepared by:** Duane "DJ" Bromfield
-**Business:** SDG Passport (SDG Innovation Labs Inc.)
+**Business:** SDG Passport
 **Date:** January 2025
 **Program:** HELIX Genesis - The Pitch
 
@@ -66,12 +66,14 @@ We prioritize the **Ops Budget** because it is 10x larger than Student Life."
 ---
 
 ## SLIDE 8: TRACTION
-**Visual:** USFS Logo + HELIX Logo.
+**Visual:** USFS Logo + HELIX Logo + Responsible Cafes Logo.
 **Script:**
 "We aren't just an idea.
 *   We are the official platform for the **United Seneca for Sustainability (USFS)**.
 *   We have **HELIX Venture** status.
-*   Our Phase 1 Web Prototype launches next month."
+*   We are partnering with **Responsible Cafes TO** (40% cup reduction, proven model).
+*   Our Phase 1 Web Prototype launches next month.
+*   CSJ funding secured for student program staff in 2026."
 
 ---
 

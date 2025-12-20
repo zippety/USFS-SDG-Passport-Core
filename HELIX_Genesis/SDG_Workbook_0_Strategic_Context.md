@@ -42,6 +42,13 @@ We are asking for a **$5,000 Catalyst Grant**.
     2.  Provide a morale boost for students post-strike.
     3.  Validate a "Living Lab" model for future curriculum integration (**Phase 2**).
 
+## 5. Early Traction: Responsible Cafes Partnership
+We are in discussions with **Responsible Cafes TO**, a proven Toronto sustainability initiative that has:
+*   Reduced disposable cup use by **40%** at partner cafés
+*   Saved cafés **$1,200+** in supply costs
+
+**Partnership Concept:** Students earn SDG points for using reusable cups at participating cafés. This transforms SDG Passport from "workshop tracker" to **real-world behavior change engine**.
+
 ---
 
 **Strategic Conclusion:**
