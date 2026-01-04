@@ -3,7 +3,28 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { ArrowLeft, CheckCircle, Lock } from 'lucide-react';
 import { mockStamps } from '../data/mockStamps';
 import { mockUser } from '../data/mockUser';
-import { getSDGColor, getSDGName, getSDGIcon } from '../utils/sdgData';
+import { getSDGColor, getSDGName } from '../utils/sdgData';
+
+// Official UN SDG Tile Image URLs
+const SDG_TILE_URLS = {
+  1: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-01.jpg',
+  2: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-02.jpg',
+  3: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg',
+  4: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-04.jpg',
+  5: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-05.jpg',
+  6: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-06.jpg',
+  7: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-07.jpg',
+  8: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-08.jpg',
+  9: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-09.jpg',
+  10: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-10.jpg',
+  11: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-11.jpg',
+  12: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-12.jpg',
+  13: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-13.jpg',
+  14: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-14.jpg',
+  15: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-15.jpg',
+  16: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-16.jpg',
+  17: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-17.jpg',
+};
 
 export default function StampCatalog({ user }) {
   const navigate = useNavigate();
@@ -34,7 +55,7 @@ export default function StampCatalog({ user }) {
             const isCollected = user.stampsCollected?.includes(stamp.sdgNumber);
             const isExpanded = expandedSDG === stamp.sdgNumber;
             const color = getSDGColor(stamp.sdgNumber);
-            const icon = getSDGIcon(stamp.sdgNumber);
+            const tileUrl = SDG_TILE_URLS[stamp.sdgNumber];
 
             return (
               <div
@@ -42,16 +63,16 @@ export default function StampCatalog({ user }) {
                 className={`bg-white dark:bg-slate-800 rounded-[2rem] shadow-xl overflow-hidden transition-all duration-500 border-2 ${isExpanded ? 'border-emerald-500/50' : 'border-transparent'}`}
               >
                 <div
-                  className="p-8 cursor-pointer group"
+                  className="p-6 cursor-pointer group"
                   onClick={() => setExpandedSDG(isExpanded ? null : stamp.sdgNumber)}
                 >
                   <div className="flex items-center space-x-6">
-                    <div
-                      className="w-20 h-20 rounded-2xl flex items-center justify-center text-4xl flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform duration-300"
-                      style={{ backgroundColor: `${color}15`, color: color }}
-                    >
-                      {icon}
-                    </div>
+                    {/* Official UN SDG Tile */}
+                    <img
+                      src={tileUrl}
+                      alt={`SDG ${stamp.sdgNumber}`}
+                      className="w-20 h-20 rounded-xl flex-shrink-0 shadow-lg group-hover:scale-110 transition-transform duration-300 object-cover"
+                    />
 
                     <div className="flex-1">
                       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
