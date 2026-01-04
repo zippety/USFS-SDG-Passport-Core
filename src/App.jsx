@@ -15,6 +15,7 @@ import OpsDashboard from './components/OpsDashboard';
 import BiodiversitySanctuary from './components/BiodiversitySanctuary';
 import Login from './components/Login';
 import FeedbackButton from './components/FeedbackButton';
+import RealmView from './components/realms/RealmView';
 import { Shield, Eye, LogOut, Zap } from 'lucide-react';
 import { useStreak } from './hooks/useStreak';
 
@@ -141,6 +142,10 @@ function App() {
             <Route path="/community" element={<CommunityHub user={user} />} />
             <Route path="/team" element={<TeamDashboard user={user} />} />
             <Route path="/sanctuary" element={<BiodiversitySanctuary user={user} />} />
+            
+            {/* Realm routes */}
+            <Route path="/realm/6" element={<RealmView realmId={6} />} />
+            <Route path="/realms/water" element={<RealmView realmId={6} />} />
 
             {/* Redirect /app routes (QA compatibility) */}
             <Route path="/app" element={<Navigate to="/" replace />} />
