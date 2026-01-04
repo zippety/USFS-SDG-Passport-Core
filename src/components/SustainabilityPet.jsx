@@ -42,7 +42,7 @@ export default function SustainabilityPet() {
                         Alpha v0.1
                     </span>
                     <h3 className="text-lg font-black text-gray-800 dark:text-gray-100 uppercase tracking-tighter">
-                        Helix Companion
+                        SDG Companion
                     </h3>
                 </div>
 
