@@ -27,6 +27,7 @@ const SDG_TILE_URLS = {
 };
 
 export default function StampCatalog({ user }) {
+  const currentUser = user || mockUser; // Fallback for MVP demo mode
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const selectedSDG = searchParams.get('sdg') ? parseInt(searchParams.get('sdg')) : null;
@@ -52,7 +53,7 @@ export default function StampCatalog({ user }) {
 
         <div className="space-y-6">
           {filteredStamps.map((stamp) => {
-            const isCollected = user.stampsCollected?.includes(stamp.sdgNumber);
+            const isCollected = currentUser.stampsCollected?.includes(stamp.sdgNumber);
             const isExpanded = expandedSDG === stamp.sdgNumber;
             const color = getSDGColor(stamp.sdgNumber);
             const tileUrl = SDG_TILE_URLS[stamp.sdgNumber];

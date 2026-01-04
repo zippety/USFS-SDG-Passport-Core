@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Scan, CheckCircle, Sparkles, Zap } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { mockStamps } from '../data/mockStamps';
+import { mockUser } from '../data/mockUser';
 import { getSDGColor, getSDGName, getSDGIcon } from '../utils/sdgData';
 import SurveyModal from './SurveyModal';
 import { db } from '../firebase';
 import { doc, updateDoc, arrayUnion, increment } from 'firebase/firestore';
 
 export default function QRScanner({ user, showToast }) {
+  const currentUser = user || mockUser; // Fallback for MVP demo mode
   const navigate = useNavigate();
   const [isScanning, setIsScanning] = useState(false);
   const [scannedStamp, setScannedStamp] = useState(null);
@@ -19,7 +21,7 @@ export default function QRScanner({ user, showToast }) {
 
   // Get available stamps (not yet collected)
   const availableStamps = mockStamps.filter(
-    stamp => !user.stampsCollected?.includes(stamp.sdgNumber)
+    stamp => !currentUser.stampsCollected?.includes(stamp.sdgNumber)
   );
 
   const handleScan = async (code = null) => {
@@ -43,7 +45,7 @@ export default function QRScanner({ user, showToast }) {
 
     try {
       // Update Firestore
-      const userRef = doc(db, "users", user.uid);
+      const userRef = doc(db, "users", currentUser.uid || currentUser.id);
       await updateDoc(userRef, {
         stampsCollected: arrayUnion(randomStamp.sdgNumber),
         points: increment(action.points)
@@ -68,7 +70,7 @@ export default function QRScanner({ user, showToast }) {
         setScannedStamp(null);
 
         // Show survey after first stamp collection (only once)
-        if (!hasShownSurvey && user.stampsCollected?.length === 0) {
+        if (!hasShownSurvey && currentUser.stampsCollected?.length === 0) {
           setShowSurvey(true);
           setHasShownSurvey(true);
         }
@@ -182,7 +184,7 @@ export default function QRScanner({ user, showToast }) {
                 </p>
                 <div className="mt-4 flex items-center justify-center space-x-2">
                   <Sparkles className="w-5 h-5 text-yellow-500" />
-                  <span className="text-sm text-gray-600">Total: {user.points} points</span>
+                  <span className="text-sm text-gray-600">Total: {currentUser.points} points</span>
                 </div>
               </div>
             </div>
