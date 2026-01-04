@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from './firebase';
@@ -64,13 +64,13 @@ function App() {
     setTimeout(() => setToastMsg(null), 3000);
   };
 
+  // Guest mode removed - direct access for MVP demo
+
   if (loading) {
     return <div className="min-h-screen bg-slate-950 flex items-center justify-center text-emerald-500">Loading Sustainability...</div>;
   }
 
-  if (!user) {
-    return <Login />;
-  }
+  // Login wall removed for MVP demo - direct access enabled
 
   return (
     <Router>
@@ -132,6 +132,7 @@ function App() {
           <OpsDashboard showToast={showToast} />
         ) : (
           <Routes>
+            {/* Main routes */}
             <Route path="/" element={<PassportView user={user} />} />
             <Route path="/catalog" element={<StampCatalog user={user} />} />
             <Route path="/scan" element={<QRScanner user={user} showToast={showToast} />} />
@@ -140,6 +141,14 @@ function App() {
             <Route path="/community" element={<CommunityHub user={user} />} />
             <Route path="/team" element={<TeamDashboard user={user} />} />
             <Route path="/sanctuary" element={<BiodiversitySanctuary user={user} />} />
+
+            {/* Redirect /app routes (QA compatibility) */}
+            <Route path="/app" element={<Navigate to="/" replace />} />
+            <Route path="/app/map" element={<Navigate to="/" replace />} />
+            <Route path="/app/catalog" element={<Navigate to="/catalog" replace />} />
+
+            {/* Catch-all: redirect unknown paths to home */}
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         )}
 

@@ -1,65 +1,63 @@
-import { CheckCircle2 } from 'lucide-react';
-import { getSDGColor, getSDGName, getSDGIcon } from '../utils/sdgData';
+import { Lock, CheckCircle2 } from 'lucide-react';
+
+// Official UN SDG Tile Image URLs (from UN website)
+const SDG_TILE_URLS = {
+  1: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-01.jpg',
+  2: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-02.jpg',
+  3: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-03.jpg',
+  4: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-04.jpg',
+  5: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-05.jpg',
+  6: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-06.jpg',
+  7: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-07.jpg',
+  8: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-08.jpg',
+  9: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-09.jpg',
+  10: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-10.jpg',
+  11: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-11.jpg',
+  12: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-12.jpg',
+  13: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-13.jpg',
+  14: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-14.jpg',
+  15: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-15.jpg',
+  16: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-16.jpg',
+  17: 'https://sdgs.un.org/sites/default/files/goals/E_SDG_Icons-17.jpg',
+};
 
 export default function StampCard({ sdgNumber, isCollected, onClick }) {
-  const color = getSDGColor(sdgNumber);
-  const name = getSDGName(sdgNumber);
-  const icon = getSDGIcon(sdgNumber);
+  const tileUrl = SDG_TILE_URLS[sdgNumber];
 
   return (
     <div
       onClick={onClick}
-      className={`stamp-card group ${isCollected ? 'stamp-collected' : 'stamp-locked'} cursor-pointer relative overflow-hidden border-2 dark:border-gray-700 transition-all duration-300 hover:scale-105 active:scale-95`}
-      style={{
-        backgroundColor: isCollected ? `${color}15` : undefined,
-        borderColor: isCollected ? color : undefined,
-      }}
+      className={`
+        relative aspect-square rounded-md overflow-hidden cursor-pointer 
+        transition-all duration-300 hover:scale-105 active:scale-95
+        ${isCollected ? 'shadow-lg hover:shadow-xl' : 'grayscale opacity-50 hover:opacity-75 hover:grayscale-[50%]'}
+      `}
     >
-      <div className={`absolute inset-0 -z-10 ${isCollected ? '' : 'bg-gray-100 dark:bg-gray-700/50 transition-colors group-hover:bg-gray-200 dark:group-hover:bg-gray-600'}`} />
+      {/* Official UN SDG Tile Image */}
+      <img
+        src={tileUrl}
+        alt={`SDG ${sdgNumber}`}
+        className="w-full h-full object-cover"
+        loading="lazy"
+      />
 
-      {/* Collector Glow */}
-      {isCollected && (
-        <div
-          className="absolute -inset-4 opacity-20 group-hover:opacity-40 transition-opacity blur-xl rounded-full"
-          style={{ backgroundColor: color }}
-        />
-      )}
-
-      {isCollected && (
-        <div
-          className="absolute top-1 right-1 z-10"
-          style={{ color: color }}
-        >
-          <CheckCircle2 className="w-5 h-5 fill-current" />
+      {/* Collection Badge Overlay */}
+      {isCollected ? (
+        <div className="absolute top-1 right-1 bg-white rounded-full p-0.5 shadow-lg">
+          <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+        </div>
+      ) : (
+        <div className="absolute top-1 right-1 bg-black/40 rounded-full p-0.5">
+          <Lock className="w-3 h-3 text-white/80" />
         </div>
       )}
 
-      <div className="text-center relative z-10 pt-2 pb-1">
-        <div className={`text-4xl mb-2 transition-all duration-300 ${isCollected ? 'scale-110' : 'grayscale opacity-40 group-hover:grayscale-0 group-hover:opacity-100 group-hover:scale-110'}`}>
-          {icon}
-        </div>
-        <div className="text-[10px] font-black uppercase tracking-tighter" style={{ color: isCollected ? color : '#9ca3af' }}>
-          SDG {sdgNumber}
-        </div>
-
-        {isCollected ? (
-          <div className="mt-1 flex items-center justify-center">
-            <span className="text-emerald-600 dark:text-emerald-400 text-[10px] font-black flex items-center gap-1 uppercase">
-              Collected
-            </span>
-          </div>
-        ) : (
-          <div className="mt-1 overflow-hidden h-4 relative">
-            <div className="text-[9px] text-gray-500 dark:text-gray-400 transition-transform duration-300 group-hover:-translate-y-full">
-              Locked
-            </div>
-            <div className="absolute inset-0 text-[9px] font-bold text-emerald-500 transition-transform duration-300 translate-y-full group-hover:translate-y-0">
-              Requirements
-            </div>
-          </div>
-        )}
-      </div>
+      {/* Shine effect for collected */}
+      {isCollected && (
+        <div className="absolute inset-0 bg-gradient-to-br from-white/10 via-transparent to-transparent pointer-events-none" />
+      )}
     </div>
   );
 }
+
 

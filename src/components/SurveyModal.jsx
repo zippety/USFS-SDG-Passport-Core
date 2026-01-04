@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, CheckCircle, Send } from 'lucide-react';
 import { db } from '../firebase';
 import { collection, addDoc, serverTimestamp } from "firebase/firestore";
